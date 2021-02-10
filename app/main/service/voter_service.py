@@ -2,20 +2,21 @@ import uuid
 import datetime
 
 from app.main import db
-from app.main.model.user import User
+from app.main.model.voter import Voter
 
 
-def save_new_user(data):
-    user = User.query.filter_by(email=data['email']).first()
-    if not user:
-        new_user = User(
+def get_all_voters():
+    return Voter.query.all()
+
+
+def save_new_voter(data):
+    voter = Voter.query.filter_by(email=data['email']).first()
+    if not voter:
+        new_voter = Voter(
             public_id=str(uuid.uuid4()),
-            email=data['email'],
-            username=data['username'],
-            password=data['password'],
-            registered_on=datetime.datetime.utcnow()
+            email=data['email']
         )
-        save_changes(new_user)
+        save_changes(new_voter)
         response_object = {
             'status': 'success',
             'message': 'Successfully registered.'
@@ -27,14 +28,6 @@ def save_new_user(data):
             'message': 'User already exists. Please Log in.',
         }
         return response_object, 409
-
-
-def get_all_users():
-    return User.query.all()
-
-
-def get_a_user(public_id):
-    return User.query.filter_by(public_id=public_id).first()
 
 
 def save_changes(data):

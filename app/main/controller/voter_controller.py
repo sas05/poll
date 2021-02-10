@@ -1,40 +1,36 @@
 from flask import request
 from flask_restplus import Resource
 
-from ..util.dto import UserDto
-from ..service.user_service import save_new_user, get_all_users, get_a_user
+from ..util.dto import VoterDto
+from ..service.voter_service import get_all_voters, save_new_voter
 
-api = UserDto.api
-_user = UserDto.user
+from ..util.parsers import parsers
+
+api = VoterDto.api
+_voter = VoterDto.voter
 
 
 @api.route('/')
-class UserList(Resource):
-    @api.doc('list_of_registered_users')
-    @api.marshal_list_with(_user, envelope='data')
+class VoterList(Resource):
+    @api.doc('list_of_registered_voters')
+    @api.marshal_list_with(_voter, envelope='data')
     def get(self):
-        """List all registered users"""
-        return get_all_users()
+        """List all registered voters"""
+        return get_all_voters()
 
-    @api.response(201, 'User successfully created.')
-    @api.doc('create a new user')
-    @api.expect(_user, validate=True)
+    @api.response(201, 'Voter successfully created.')
+    @api.doc('create a new voter')
+    @api.expect(_voter, validate=True)
     def post(self):
-        """Creates a new User """
+        """creates a new voter"""
         data = request.json
-        return save_new_user(data=data)
+        return save_new_voter(data=data)
 
 
-@api.route('/<public_id>')
-@api.param('public_id', 'The User identifier')
-@api.response(404, 'User not found.')
-class User(Resource):
-    @api.doc('get a user')
-    @api.marshal_with(_user)
-    def get(self, public_id):
-        """get a user given its identifier"""
-        user = get_a_user(public_id)
-        if not user:
-            api.abort(404)
-        else:
-            return user
+@api.route('/bulk-loading')
+class VoterList(Resource):
+    @api.response(201, 'Bulk voter list successfully uploaded.')
+    @api.doc('create new voters')
+    @api.expect(parsers.file_upload)
+    def post(self):
+        api.abort(404)
