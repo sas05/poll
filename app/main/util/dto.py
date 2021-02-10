@@ -9,3 +9,12 @@ class UserDto:
         'password': fields.String(required=True, description='user password'),
         'public_id': fields.String(description='user Identifier')
     })
+
+
+class VoterDto:
+    api = Namespace('voter', description='voter related operations')
+    voter = api.model('voter', {
+        'id': fields.String(required=True, description='voter ID'),
+        'name': fields.String(required=True, description='user name'),
+        'email': fields.String(required=True, description='user email'),
+    })
